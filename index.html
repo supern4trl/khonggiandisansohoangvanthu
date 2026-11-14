@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tour 360°</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <a id="school-logo" hidden><img alt="" draggable="false" /></a>
+  <div id="home" hidden></div>
+
+  <!-- Sảnh chờ trước khi vào panorama: hướng dẫn viên + tên phòng + mô tả + nút vào -->
+  <div id="lobby" hidden>
+    <div id="lb-bg"></div>
+    <i class="lb-orb o1"></i><i class="lb-orb o2"></i>
+    <div class="lb-dust"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="lb-frame"><b></b><b></b><b></b><b></b></div>
+    <button id="lb-home" hidden>← Về sảnh chọn</button>
+    <div class="lb-stage">
+      <div class="lb-guide"><img id="lb-gif" alt="Hướng dẫn viên" draggable="false" /></div>
+      <div class="lb-text">
+        <span id="lb-eyebrow"></span>
+        <h1 id="lb-title"></h1>
+        <div class="lb-divider"><i></i><b></b><i></i></div>
+        <p id="lb-desc"></p>
+        <div id="lb-meta"></div>
+      </div>
+    </div>
+    <div id="lb-hint" hidden>Chạm vào màn hình để nghe hướng dẫn</div>
+    <button id="lb-enter"><span class="lb-ring"></span><span class="lb-label">VÀO THAM QUAN</span><svg
+        viewBox="0 0 24 24">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg></button>
+    <div id="lb-foot"></div>
+  </div>
+
+  <div id="tour" hidden>
+    <div id="panorama"></div>
+    <div id="hs-layer"></div> <!-- mũi tên 3D -->
+    <svg id="gizmo"></svg> <!-- 3 vòng xoay X/Y/Z -->
+    <div id="hs-labels"></div> <!-- tên phòng phía trên mũi tên -->
+    <div id="room-title"></div>
+
+    <div id="bottom-left">
+      <button id="back-btn" hidden></button>
+    </div>
+
+    <div id="top-right">
+      <button id="info-btn" hidden>ⓘ</button>
+      <button id="menu-toggle" hidden>☰ Phòng</button>
+    </div>
+    <!-- Khung xem hiện vật: ảnh bên trái, thông tin bên phải (dữ liệu từ items.csv) -->
+    <div id="iv" hidden>
+      <div id="iv-main">
+        <div id="iv-bar">
+          <span id="iv-count"></span>
+          <span class="iv-spacer"></span>
+          <button id="iv-zoom" class="iv-ico" title="Phóng to"><svg viewBox="0 0 24 24">
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="M15.5 15.5 21 21" />
+            </svg></button>
+          <button id="iv-play" class="iv-ico" title="Tự chạy ảnh">
+            <svg class="i-play" viewBox="0 0 24 24">
+              <path d="M7 4.5v15l12-7.5z" />
+            </svg>
+            <svg class="i-pause" viewBox="0 0 24 24">
+              <path d="M8 5v14M16 5v14" />
+            </svg>
+          </button>
+          <button id="iv-full" class="iv-ico" title="Toàn màn hình"><svg viewBox="0 0 24 24">
+              <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" />
+            </svg></button>
+          <button id="iv-grid" class="iv-ico" title="Ẩn/hiện ảnh nhỏ"><svg viewBox="0 0 24 24" class="dots">
+              <circle cx="5" cy="5" r="1.7" />
+              <circle cx="12" cy="5" r="1.7" />
+              <circle cx="19" cy="5" r="1.7" />
+              <circle cx="5" cy="12" r="1.7" />
+              <circle cx="12" cy="12" r="1.7" />
+              <circle cx="19" cy="12" r="1.7" />
+              <circle cx="5" cy="19" r="1.7" />
+              <circle cx="12" cy="19" r="1.7" />
+              <circle cx="19" cy="19" r="1.7" />
+            </svg></button>
+          <button id="iv-close" class="iv-ico iv-x" title="Đóng (Esc)"><svg viewBox="0 0 24 24">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg></button>
+        </div>
+        <div id="iv-stage">
+          <button id="iv-prev" class="iv-nav" title="Ảnh trước"><svg viewBox="0 0 24 24">
+              <path d="M15 4 7 12l8 8" />
+            </svg></button>
+          <img id="iv-img" alt="" draggable="false" />
+          <button id="iv-next" class="iv-nav" title="Ảnh sau"><svg viewBox="0 0 24 24">
+              <path d="M9 4l8 8-8 8" />
+            </svg></button>
+        </div>
+        <div id="iv-thumbs"></div>
+      </div>
+      <aside id="iv-side">
+        <h2 id="iv-name"></h2>
+        <div id="iv-period"></div>
+        <h3 id="iv-caption"></h3>
+        <p id="iv-desc"></p>
+      </aside>
+    </div>
+
+
+    <!-- Taskbar liquid glass -->
+    <div id="dock-wrap" hidden>
+      <div id="vol-pop" hidden>
+        <div>
+          <button id="vp-mute" class="vico" title="Tắt/bật tiếng" aria-label="Tắt/bật tiếng"><svg viewBox="0 0 24 24">
+              <path d="M4 9.5v5h4l5 4v-13l-5 4z" />
+              <path class="w1" d="M16 9.5a3.5 3.5 0 0 1 0 5" />
+              <path class="w2" d="M18.5 7a7 7 0 0 1 0 10" />
+              <path class="x" d="M16 9.5l5 5M21 9.5l-5 5" />
+            </svg></button>
+          <button id="vp-dn" title="Giảm" aria-label="Giảm âm lượng"><svg viewBox="0 0 24 24">
+              <path d="M5 12h14" />
+            </svg></button>
+          <input id="dk-range" type="range" min="0" max="100" step="1" aria-label="Âm lượng" />
+          <button id="vp-up" title="Tăng" aria-label="Tăng âm lượng"><svg viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5v14" />
+            </svg></button>
+          <b id="dk-pct"></b>
+        </div>
+      </div>
+      <div id="dock-toast" class="lg" hidden></div>
+      <div id="dock" class="lg">
+        <button id="dk-music" data-tip="Nhạc nền" aria-pressed="false">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 18V5l11-2v13" />
+            <circle cx="6.5" cy="18" r="2.5" />
+            <circle cx="17.5" cy="16" r="2.5" />
+            <path class="slash" d="M3 3l18 18" />
+          </svg>
+        </button>
+        <div class="vol-wrap">
+          <button id="dk-vol" class="vico" data-tip="Âm lượng" aria-expanded="false">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 9.5v5h4l5 4v-13l-5 4z" />
+              <path class="w1" d="M16 9.5a3.5 3.5 0 0 1 0 5" />
+              <path class="w2" d="M18.5 7a7 7 0 0 1 0 10" />
+              <path class="x" d="M16 9.5l5 5M21 9.5l-5 5" />
+            </svg>
+          </button>
+        </div>
+        <i class="sep"></i>
+        <button id="dk-guide" data-tip="Hướng dẫn viên" aria-pressed="false">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="3.5" />
+            <path d="M5 20c.6-3.6 3.4-5.5 7-5.5s6.4 1.9 7 5.5" />
+            <path d="M19.5 4.5c1 1 1.5 2.2 1.5 3.5M4.5 4.5C3.5 5.5 3 6.7 3 8" />
+          </svg>
+        </button>
+        <button id="dk-loc" data-tip="Địa điểm" hidden>
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21s7-5.6 7-11a7 7 0 0 0-14 0c0 5.4 7 11 7 11z" />
+            <circle cx="12" cy="10" r="2.5" />
+          </svg>
+        </button>
+        <i class="sep"></i>
+        <button id="dk-full" data-tip="Toàn màn hình">
+          <svg class="i-in" viewBox="0 0 24 24">
+            <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" />
+          </svg>
+          <svg class="i-out" viewBox="0 0 24 24">
+            <path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" />
+          </svg>
+        </button>
+        <button id="dk-hide" data-tip="Ẩn thanh">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      </div>
+      <button id="dock-reveal" class="lg" data-tip="Hiện thanh" aria-label="Hiện thanh công cụ">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 15l6-6 6 6" />
+        </svg>
+      </button>
+    </div>
+
+    <nav id="menu" hidden></nav>
+    <aside id="info" hidden></aside>
+
+    <!-- GUI chỉnh sửa (chỉ hiện khi editMode: true trong config.js) -->
+    <aside id="editor" hidden>
+      <div class="ed-head">✏️ Chế độ chỉnh sửa<small id="ed-scene"></small></div>
+      <p class="ed-hint">Kéo mũi tên để di chuyển trên sàn · kéo 3 vòng <b style="color:#ff6b6b">đỏ X</b> / <b
+          style="color:#5dff8a">xanh lá Y</b> / <b style="color:#5aa9ff">xanh dương Z</b> để xoay 360° theo từng trục
+      </p>
+      <button id="ed-add">＋ Thêm mũi tên (tại tâm màn hình)</button>
+      <button id="ed-add-item">🏺 Thêm hiện vật (tại tâm màn hình)</button>
+      <div id="ed-list"></div>
+
+      <div id="ed-props" hidden>
+        <label>Loại
+          <select id="ed-kind">
+            <option value="arrow">Mũi tên chuyển cảnh</option>
+            <option value="item">Hiện vật</option>
+          </select></label>
+        <label id="ed-to-wrap">Đi tới <select id="ed-to"></select></label>
+        <label id="ed-item-wrap" hidden>Hiện vật (id trong items.csv)
+          <input id="ed-item" type="text" list="ed-item-list" placeholder="vd: c10, p-p2-1" />
+          <datalist id="ed-item-list"></datalist></label>
+        <div id="ed-item-pick" hidden>
+          <div id="ed-item-prev">
+            <img id="ed-prev-img" alt="" draggable="false" />
+            <div><b id="ed-prev-name"></b><small id="ed-prev-period"></small><small id="ed-prev-count"></small></div>
+          </div>
+          <input id="ed-item-q" type="text" placeholder="🔍 Tìm hiện vật theo tên / id…" />
+          <div id="ed-item-grid"></div>
+        </div>
+        <label>Tên hiển thị <input id="ed-label" type="text"
+            placeholder="(để trống = tên phòng / tên hiện vật)" /></label>
+        <label id="ed-image-wrap">Ảnh mũi tên riêng <input id="ed-image" type="text"
+            placeholder="(để trống = ảnh mặc định)" /></label>
+
+        <div class="ed-xyz">
+          <b>Vị trí (tọa độ)</b>
+          <div class="ed-xyz-row">
+            <label>X <input id="ed-px" type="number" step="0.05" /></label>
+            <label>Y <input id="ed-py" type="number" step="0.05" /></label>
+            <label>Z <input id="ed-pz" type="number" step="0.05" /></label>
+          </div>
+          <small>X: trái (−) / phải (+) · Y: sàn = −1, cao lên là + · Z: sau (−) / trước (+). Camera ở (0, 0,
+            0).</small>
+        </div>
+
+        <div id="ed-arrow-only">
+          <label class="ed-auto"><input type="checkbox" id="ed-auto" /> Tự xoay Y chĩa về tâm (chỉnh trục Y bên dưới
+            sẽ tự bỏ chọn)</label>
+          <div id="ed-presets">
+            <button data-rx="0" data-rz="0">Nằm sàn</button>
+            <button data-rx="-45" data-rz="0">Ngửa lên 45°</button>
+            <button data-rx="-90" data-rz="0">Dựng đứng</button>
+            <button data-addrz="180">Lật 180°</button>
+          </div>
+          <label>Xoay X — ngửa lên (−) / cúi xuống (+)
+            <span class="ed-pair"><input id="ed-rxn" type="number" step="1" /><b>°</b></span>
+            <input id="ed-rx" type="range" min="-180" max="180" step="1" /></label>
+          <label>Xoay Y — quay hướng trên sàn
+            <span class="ed-pair"><input id="ed-ryn" type="number" step="1" /><b>°</b></span>
+            <input id="ed-ry" type="range" min="-180" max="180" step="1" /></label>
+          <label>Xoay Z — nghiêng sang bên (lăn)
+            <span class="ed-pair"><input id="ed-rzn" type="number" step="1" /><b>°</b></span>
+            <input id="ed-rz" type="range" min="-180" max="180" step="1" /></label>
+        </div>
+        <label>Kích thước (1 = mặc định)
+          <span class="ed-pair"><input id="ed-scn" type="number" step="0.05" min="0.05" max="20" /><b>×</b></span>
+          <input id="ed-sc" type="range" min="0.1" max="8" step="0.05" /></label>
+        <label>Độ cao so với sàn: <b id="v-ht"></b><input id="ed-ht" type="range" min="-0.5" max="3"
+            step="0.05" /></label>
+        <button id="ed-preview">👁 Xem trước</button>
+        <button id="ed-del" class="danger">🗑 Xóa mũi tên này</button>
+      </div>
+
+      <div class="ed-foot">
+        <b>Bấm nút dưới để ghi vào config.js:</b>
+        <button id="ed-pick">📂 Chọn file config.js (nếu không chạy serve.js)</button>
+        <button id="ed-save">💾 Lưu vào config.js</button>
+        <label class="ed-check"><input type="checkbox" id="ed-off" /> Ghi xong: đặt editMode = false</label>
+        <button id="ed-copy-one">📋 Copy mũi tên đang chọn</button>
+        <button id="ed-copy-all">📋 Copy tất cả mũi tên của phòng này</button>
+        <button id="ed-reset" class="ghost">↺ Bỏ thay đổi chưa lưu</button>
+        <div id="ed-status"></div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
+  <script src="patch.js"></script>
+  <script src="config.js"></script>
+  <script src="taskbar.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

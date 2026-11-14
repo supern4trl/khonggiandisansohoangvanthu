@@ -1,0 +1,3 @@
+- images/arrow.gif          : ảnh mũi tên chỉ đường (đổi tên/đường dẫn trong config.js > arrow.image)
+- images/<id-room>/cover.jpg: thumbnail trang chủ (không bắt buộc)
+- images/<id-room>/<tên>.jpg: ảnh 360 equirectangular (tỉ lệ 2:1)
