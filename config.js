@@ -55,8 +55,7 @@ const TOUR_CONFIG = {
     title: "KHÔNG GIAN DI SẢN SỐ HOÀNG VĂN THỤ",
     description: "Khám phá di tích lịch sử qua trải nghiệm tham quan thực tế ảo",
     eyebrow: "HÀNH TRÌNH KHÁM PHÁ · DI SẢN LỊCH SỬ",
-    background: "images/skin/background.jpg",
-    footer: ""
+    background: "images/skin/background.jpg"
   },
 
   rooms: [
