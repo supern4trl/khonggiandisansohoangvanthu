@@ -374,7 +374,7 @@
         <p>${esc(site.description)}</p>
       </header>
       <div class="grid">${cards}</div>
-      ${site.footer ? `<footer class="home-foot">${esc(site.footer)}</footer>` : ""}`;
+      `;
     el.scrollTop = 0;
   }
 
@@ -421,7 +421,8 @@
     $("lb-eyebrow").textContent = g.eyebrow || "Hướng dẫn tham quan";
     const gif = $("lb-gif"); gif.hidden = !g.gif; if (g.gif) gif.src = g.gif;
     $("lb-meta").textContent = r.scenes.length + " không gian · Thực tế ảo 360°";
-    $("lb-foot").textContent = site.footer || "";
+    $("lb-foot").textContent = "";
+    $("lb-foot").hidden = true;
     $("lb-hint").hidden = true;
     $("lb-home").hidden = !canGoHome;
     $("lb-home").onclick = () => { location.hash = ""; };
