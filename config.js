@@ -56,7 +56,7 @@ const TOUR_CONFIG = {
     description: "Khám phá di tích lịch sử qua trải nghiệm tham quan thực tế ảo",
     eyebrow: "HÀNH TRÌNH KHÁM PHÁ · DI SẢN LỊCH SỬ",
     background: "images/skin/background.jpg",
-    footer: "THPT VĂN QUAN · LẠNG SƠN · VIỆT NAM"
+    footer: ""
   },
 
   rooms: [
