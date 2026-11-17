@@ -1,0 +1,349 @@
+/* =====================================================================
+   FILE CẤU HÌNH DUY NHẤT — tất cả room, phòng, mũi tên chỉ đường.
+
+   editMode: false  -> mở GUI chỉnh sửa (thêm / kéo / xoay 3D mũi tên)
+   editMode: false -> đóng GUI, chỉ xem
+
+   - rooms có 1 phần tử  -> vào thẳng, không hiện trang chủ
+   - rooms có 2+ phần tử -> hiện trang chủ để chọn room
+   - scene.parent = id phòng cha (null = cấp cao nhất)
+
+   Mỗi mũi tên (hotspot) trong "hotspots":
+     to     : id phòng sẽ đi tới
+     yaw    : hướng ngang tới vị trí mũi tên (độ)
+     pitch  : hướng dọc tới vị trí mũi tên (âm = dưới chân trời)
+     dist   : khoảng cách tới mũi tên (bỏ trống = nằm đúng trên sàn)
+     rotX   : xoay quanh trục X (độ) — nghiêng lên/xuống
+     rotY   : xoay quanh trục Y (độ) — quay hướng trên sàn
+     rotZ   : xoay quanh trục Z (độ) — nghiêng sang bên / lật
+     scale  : to/nhỏ (mặc định 1)
+     label  : tên hiển thị phía trên mũi tên (bỏ trống = tên phòng)
+     image  : ảnh mũi tên riêng cho cái này (bỏ trống = arrow.image bên dưới)
+
+   -> Không cần gõ tay: dùng GUI chỉnh sửa rồi chọn
+      ① Ghi tự động vào config.js (chạy: node serve.js)
+      ② Copy mũi tên / copy cả phòng rồi dán vào "hotspots"
+   ===================================================================== */
+const TOUR_CONFIG = {
+
+  editMode: true,   // ✏️ true = mở chỉnh sửa | false = đóng
+
+  // Ảnh mũi tên chỉ đường (dùng chung, có thể ghi đè từng mũi tên bằng "image")
+
+  arrow: {
+    image: "images/skin/muiten.png",
+    sprite: { cols: 5, rows: 5, frames: 25, fps: 15 },
+    tipY: 0.47,
+    nativeAngle: 0,
+    size: 0.5,
+    minPx: 36,
+    maxPx: 220,
+    pivot: "tip",
+    autoAim: true,
+    aim: "tail"
+  },
+
+  // Logo trường (góc trái trên cùng). Bỏ trống image để ẩn. href: bấm vào logo mở link (tuỳ chọn)
+  logo: { image: "images/skin/logo.png", alt: "Logo trường", href: "", height: 90 },
+
+  // Nhạc nền (đặt file mp3 vào thư mục audio/). Có thể ghi đè riêng từng room bằng room.music
+  music: { src: "audio/background.mp3", volume: 0.5, autoplay: true, loop: true },
+
+  // Hướng dẫn viên (làm sau): đổi enabled = true khi đã có tính năng
+  guide: { enabled: false },
+
+  // Trang chủ (chỉ hiện khi có 2+ room)
+  site: {
+    title: "Tour 360°",
+    description: "Chọn không gian bạn muốn tham quan",
+    eyebrow: "Tham quan thực tế ảo",              // dòng nhỏ phía trên tiêu đề
+    background: "images/skin/background.jpg",         // ảnh nền sảnh chọn (không có file thì dùng ảnh bìa room đầu)
+    footer: "THPT Văn Quan · Tỉnh Lạng Sơn"        // dòng cuối trang (bỏ trống để ẩn)
+  },
+
+  rooms: [
+
+    /* ───────────── Nhà lưu niệm đồng chí Hoàng Văn Thụ ───────────── */
+    {
+      id: "nha-a",
+      name: "Nhà lưu niệm đồng chí Hoàng Văn Thụ",
+      description: "Hành trình về nguồn, khám phá dấu ấn lịch sử tại Nhà lưu niệm đồng chí Hoàng Văn Thụ.",
+      folder: "images/nha-a/",
+      cover: "images/skin/nhaluuniem.jpg",
+      // Sảnh chờ: hướng dẫn viên (gif) + voice (mp3). Nút VÀO THAM QUAN chỉ hiện khi voice đọc xong.
+      // lobby: false = bỏ sảnh chờ. guide.idleImage (tuỳ chọn) = ảnh tĩnh thay GIF khi voice xong.
+      guide: { gif: "images/skin/guide.gif", voice: "audio/gioithieu_nhaluuniem.mp3" },
+      settings: {
+        startScene: "phong1",
+        autoRotate: true,
+        idleSpeed: 12,
+        idleDelay: 1500,
+        mouseParallax: true,
+        parallaxYaw: 6,
+        parallaxPitch: 3
+      },
+      scenes: [
+        {
+          id: "phong1", title: "Cổng chào", image: "p-1.jpg", parent: null,
+          hotspots: [
+            { to: "phong2", yaw: 75.75, pitch: -9.73, rotX: -71, rotY: 75.8, rotZ: 0, scale: 1.7 },
+            { to: "phong2", yaw: -70.25, pitch: -11.87, rotX: -71, rotY: -70.2, rotZ: -36, scale: 1.7 }
+          ]
+        },
+        {
+          id: "phong2", title: "Giữa sân", image: "p-2.jpg", parent: "phong1",
+          hotspots: [
+            { to: "phong3", yaw: -3.47, pitch: -4.02, rotX: -114, rotY: -3.5, rotZ: 0 },
+            { to: "phong1", yaw: -147.25, pitch: -3.31, rotX: -76, rotY: -147.2, rotZ: -28, scale: 1.9 },
+            { to: "phong1", yaw: 140.09, pitch: -2.61, rotX: -76, rotY: 140.1, rotZ: 8, scale: 1.9 }
+          ]
+        },
+        {
+          id: "phong3", title: "Giữa nhà", image: "p-3.jpg", parent: "phong1",
+          hotspots: [
+            { to: "phong4", yaw: -72.5, pitch: -20.65, rotX: -54, rotY: -72.5, rotZ: -37 },
+            { to: "phong5", yaw: 59.05, pitch: -20.08, rotX: -52, rotY: 59, rotZ: 4.4 },
+            { to: "phong2", yaw: 177.14, pitch: -20.86, rotX: -47, rotY: 177.1, rotZ: 0 }
+          ]
+        },
+        {
+          id: "phong4", title: "Bên phải", image: "p-4.jpg", parent: "phong1",
+          hotspots: [
+            { to: "phong3", yaw: -140.62, pitch: -37.63, rotX: 0, rotY: -140.6, rotZ: 0 },
+            { item: "c1", yaw: -69.03, pitch: -5.1 },
+            { item: "c2", yaw: -61.42, pitch: -4.95, dist: 11.271 },
+            { item: "c4", yaw: -60.89, pitch: 0.27, dist: 3 },
+            { item: "c3", yaw: -54.1, pitch: -5.28, dist: 3 },
+            { item: "c6", yaw: -50.53, pitch: -3.59, dist: 3 },
+            { item: "c7", yaw: -45.73, pitch: -4.15, dist: 3 },
+            { item: "c5", yaw: -48.19, pitch: 1.94, dist: 3 },
+            { item: "c10", yaw: -50.1, pitch: -14.2, dist: 3 },
+            { item: "c9", yaw: -16.47, pitch: 2.91, dist: 3 },
+            { item: "c8", yaw: -16.89, pitch: -5.35, dist: 3 },
+            { item: "t-p2-15", yaw: 16.95, pitch: 4.9, dist: 3 },
+            { item: "t-p2-1", yaw: 17.1, pitch: -5.05, dist: 3 },
+            { item: "t-p2-2", yaw: 46.73, pitch: 1.76, dist: 3 },
+            { item: "t-p2-3", yaw: 46.96, pitch: -5.03, dist: 3 },
+            { item: "t-p2-4", yaw: 51.56, pitch: 1.29, dist: 3 },
+            { item: "t-p2-5", yaw: 51.7, pitch: -4.99, dist: 3 },
+            { item: "t-p2-6", yaw: 56.19, pitch: 0.34, dist: 3 },
+            { item: "t-p2-7", yaw: 56.03, pitch: -5.06, dist: 3 },
+            { item: "t-p2-8", yaw: 64.84, pitch: 0.32, dist: 3 },
+            { item: "t-p2-9", yaw: 64.83, pitch: -5.16, dist: 3 },
+            { item: "t-p2-10", yaw: 73.77, pitch: -2.54, dist: 3 },
+            { item: "t-p2-11", yaw: 84.88, pitch: -2.52, dist: 3 },
+            { item: "t-p2-12", yaw: 97.64, pitch: -2.6, dist: 3 },
+            { item: "t-p2-T", yaw: 51.74, pitch: -16.27, dist: 3 }
+          ]
+        },
+        {
+          id: "phong5", title: "Bên trái", image: "p-5.jpg", parent: "phong1",
+          hotspots: [
+            { to: "phong3", yaw: 127.17, pitch: -39.3, rotX: 0, rotY: 127.2, rotZ: 0 },
+            { item: "p-p2-2", yaw: -92.38, pitch: -0.27, dist: 3 },
+            { item: "p-p2-3", yaw: -80.48, pitch: -0.37, dist: 3 },
+            { item: "p-p2-4", yaw: -69.71, pitch: -0.15, dist: 3 },
+            { item: "p-p2-5", yaw: -62.36, pitch: 2.79, dist: 3 },
+            { item: "p-p2-6", yaw: -62.39, pitch: -2.16, dist: 3 },
+            { item: "p-p2-7", yaw: -57.67, pitch: 2.78, dist: 3 },
+            { item: "p-p2-8", yaw: -57.83, pitch: -2.19, dist: 3 },
+            { item: "p-p2-9", yaw: -52.61, pitch: 2.78, dist: 3 },
+            { item: "p-p2-10", yaw: -52.7, pitch: -1.8, dist: 3 },
+            { item: "p-p2-11", yaw: -48.1, pitch: 3.37, dist: 3 },
+            { item: "p-p2-1", yaw: -49.6, pitch: -11.43, dist: 3 },
+            { item: "p-p2-12", yaw: -47.74, pitch: -1.91, dist: 3 },
+            { item: "p-p1-13", yaw: -21.92, pitch: 6.6, dist: 3 },
+            { item: "p-p1-14", yaw: -21.73, pitch: -1.62, dist: 3 },
+            { item: "p-p1-1", yaw: 5.93, pitch: 6.11, dist: 3 },
+            { item: "p-p1-2", yaw: 5.73, pitch: -2.14, dist: 3 },
+            { item: "p-p1-3", yaw: 35.3, pitch: 3.76, dist: 3 },
+            { item: "p-p1-4", yaw: 35.11, pitch: -2.79, dist: 3 },
+            { item: "p-p1-5", yaw: 40.03, pitch: 1.99, dist: 3 },
+            { item: "p-p1-6", yaw: 39.86, pitch: -2.99, dist: 3 },
+            { item: "p-p1-7", yaw: 46.42, pitch: -3.16, dist: 3 },
+            { item: "p-p1-8", yaw: 51.07, pitch: -3.7, dist: 3 },
+            { item: "p-p1-10", yaw: 59.9, pitch: -3.74, dist: 3 },
+            { item: "p-p1-9", yaw: 60.17, pitch: 1.57, dist: 3 },
+            { item: "p-p2-T", yaw: 35.7, pitch: -13.2, dist: 3 }
+          ]
+        }
+      ]
+    },
+    /* ───────────── Nhà sàn đồng chí Hoàng Văn Thụ ───────────── */
+    {
+      id: "nha-b",
+      name: "Nhà sàn đồng chí Hoàng Văn Thụ",
+      description: "Di tích lịch sử và hoạt động Cách mạng của đồng Chí Hoàng Văn Thụ.",
+      folder: "images/nha-b/",
+      cover: "images/skin/nhasan.jpg",
+      // Sảnh chờ: hướng dẫn viên (gif) + voice (mp3). Nút VÀO THAM QUAN chỉ hiện khi voice đọc xong.
+      // lobby: false = bỏ sảnh chờ. guide.idleImage (tuỳ chọn) = ảnh tĩnh thay GIF khi voice xong.
+      guide: { gif: "images/skin/guide.gif", voice: "audio/gioithieu_nhasan.mp3" },
+      settings: {
+        startScene: "phong1",
+        autoRotate: true,
+        idleSpeed: 12,
+        idleDelay: 1500,
+        mouseParallax: true,
+        parallaxYaw: 6,
+        parallaxPitch: 3
+      },
+      scenes: [
+        {
+          id: "phong1", title: "Gian chính", image: "p-1.jpg", parent: null,
+          hotspots: [
+            { to: "phong2", yaw: 17.32, pitch: -14.16, rotX: -36, rotY: -31, rotZ: 4, auto: false },
+            { to: "phong2", yaw: -20.14, pitch: -13.51, rotX: -36, rotY: 31, rotZ: 0, auto: false },
+            { item: "ns-gc-1", yaw: 57.69, pitch: -14.28, dist: 3 },
+            { item: "ns-gc-4", yaw: 92.35, pitch: 6.75, dist: 3 },
+            { item: "ns-gc-3", yaw: 84.76, pitch: -11.58, dist: 3 },
+            { item: "ns-gc-2", yaw: 102.73, pitch: -12.46, dist: 3 },
+            { item: "ns-gc-7", yaw: -84.57, pitch: -11.35, dist: 3 },
+            { item: "ns-gc-5", yaw: -99.01, pitch: 6.06, dist: 3 },
+            { item: "ns-gc-6", yaw: -86.76, pitch: 6.47, dist: 3 },
+            { item: "c1", yaw: -50.57, pitch: -6.97, dist: 3 },
+            { item: "ns-gc-9", yaw: -53.72, pitch: 2.5, dist: 3 },
+            { item: "c1", yaw: -50.06, pitch: 2.61, dist: 3 },
+            { item: "ns-gc-11", yaw: -46.33, pitch: 2.66, dist: 3 },
+            { item: "ns-gc-12", yaw: -42.04, pitch: 2.78, dist: 3 },
+            { item: "ns-gc-13", yaw: -50.1, pitch: 9.18, dist: 3 },
+            { item: "ns-gc-14", yaw: -46.17, pitch: 9.96, dist: 3 },
+            { item: "ns-gb-9", yaw: -25.59, pitch: -1.47, dist: 3 },
+            { item: "ns-gb-9", yaw: 30.97, pitch: -3.06, dist: 3 },
+            { item: "ns-gc-15", yaw: 17.91, pitch: 11.52, dist: 3 }
+          ]
+        },
+        {
+          id: "phong2", title: "Gian bếp", image: "p-2.jpg", parent: "phong1",
+          hotspots: [
+            { item: "ns-gb-4", yaw: -8.66, pitch: -4.18, dist: 3 },
+            { item: "ns-gb-9", yaw: -41.8, pitch: -4.43, dist: 3 },
+            { item: "ns-gb-1", yaw: -76.88, pitch: -36.79, dist: 3 },
+            { item: "ns-gb-8", yaw: -23.14, pitch: -30.26, dist: 3 },
+            { item: "ns-gb-3", yaw: -17.93, pitch: -37.09, dist: 3 },
+            { item: "ns-gb-2", yaw: 76.24, pitch: -18.45, dist: 3 },
+            { item: "ns-gb-6", yaw: 74.11, pitch: -2.41, dist: 3 },
+            { item: "ns-gb-5", yaw: 125.52, pitch: -22.08, dist: 3 },
+            { item: "ns-gb-7", yaw: 157.43, pitch: -30.36, dist: 3 },
+            { to: "phong1", yaw: -70.9, pitch: -19.88, rotX: 0, rotY: -136.4, rotZ: 0, auto: false },
+            { to: "phong1", yaw: -141.6, pitch: -43.92, rotX: 0, rotY: -141.4, rotZ: 0, auto: false }
+          ]
+        }
+      ]
+    },
+    /* ───────────── Di tích Nhà số 8 phố Chính Cai ───────────── */
+    {
+      id: "nha-c",
+      name: "Di tích Nhà số 8 phố Chính Cai",
+      description: "Dấu ấn hoạt động cách mạng của đồng chí Hoàng Văn Thụ tại Nhà số 8 phố Chính Cai.",
+      folder: "images/nha-c/",
+      cover: "images/skin/nhaso8.jpg",
+      // Sảnh chờ: hướng dẫn viên (gif) + voice (mp3). Nút VÀO THAM QUAN chỉ hiện khi voice đọc xong.
+      // lobby: false = bỏ sảnh chờ. guide.idleImage (tuỳ chọn) = ảnh tĩnh thay GIF khi voice xong.
+      guide: { gif: "images/skin/guide.gif", voice: "audio/gioithieu_nhaso8.mp3" },
+      settings: {
+        startScene: "phong1",
+        autoRotate: true,
+        idleSpeed: 12,
+        idleDelay: 1500,
+        mouseParallax: true,
+        parallaxYaw: 6,
+        parallaxPitch: 3
+      },
+      scenes: [
+        {
+          id: "phong1", title: "Tầng 1", image: "p-1.jpg", parent: null,
+          hotspots: [
+            { to: "phong2", yaw: 13.69, pitch: -11.38, rotX: -89, rotY: -18, rotZ: 0, scale: 1.2, auto: false },
+            { item: "ns8-t1-16", yaw: -123.43, pitch: 12.59, dist: 3 },
+            { item: "ns8-t1-15", yaw: -123.74, pitch: 1.88, dist: 3 },
+            { item: "ns8-t1-18", yaw: -109.02, pitch: 13.8, dist: 3 },
+            { item: "ns8-t1-17", yaw: -110.05, pitch: 1.75, dist: 3 },
+            { item: "ns8-t1-20", yaw: -93.18, pitch: 13.89, dist: 3 },
+            { item: "ns8-t1-19", yaw: -94.13, pitch: 0.94, dist: 3 },
+            { item: "ns8-t1-22", yaw: -75.85, pitch: 13.09, dist: 3 },
+            { item: "ns8-t1-21", yaw: -76.58, pitch: 0.35, dist: 3 },
+            { item: "ns8-t1-23", yaw: -61.3, pitch: -0.25, dist: 3 },
+            { item: "ns8-t1-24", yaw: -61.4, pitch: 11.36, dist: 3 },
+            { item: "ns8-t1-26", yaw: -49.82, pitch: 9.45, dist: 3 },
+            { item: "ns8-t1-25", yaw: -49.89, pitch: -0.78, dist: 3 },
+            { item: "ns8-t1-28", yaw: -39.84, pitch: 7.66, dist: 3 },
+            { item: "ns8-t1-27", yaw: -39.91, pitch: -1.14, dist: 3 },
+            { item: "ns8-t1-29", yaw: -33.18, pitch: -1.03, dist: 3 },
+            { item: "ns8-t1-30", yaw: -33.13, pitch: 6.15, dist: 3 },
+            { item: "ns8-t1-31", yaw: -59.48, pitch: -20.37, dist: 3 },
+            { item: "ns8-t1-14", yaw: -131.77, pitch: -13.39, dist: 3 },
+            { item: "ns8-t1-35", yaw: 123.2, pitch: -19.46, dist: 3 },
+            { item: "ns8-t1-34", yaw: 48.2, pitch: -16.08, dist: 3 },
+            { item: "ns8-t1-33", yaw: 26.06, pitch: 1.74, dist: 3 },
+            { item: "ns8-t1-32", yaw: 21.01, pitch: 5.19, dist: 3 },
+            { item: "ns8-t1-37", yaw: 32.92, pitch: 8.09, dist: 3 },
+            { item: "ns8-t1-36", yaw: 32.96, pitch: 0.46, dist: 3 },
+            { item: "ns8-t1-38", yaw: 39.91, pitch: 1.02, dist: 3 },
+            { item: "ns8-t1-1", yaw: 40.11, pitch: 10.13, dist: 3 },
+            { item: "ns8-t1-3", yaw: 49.14, pitch: 12.42, dist: 3 },
+            { item: "ns8-t1-2", yaw: 48.97, pitch: 1.48, dist: 3 },
+            { item: "ns8-t1-4", yaw: 62.72, pitch: 1.81, dist: 3 },
+            { item: "ns8-t1-5", yaw: 61.99, pitch: 15.17, dist: 3 },
+            { item: "ns8-t1-7", yaw: 80.57, pitch: 18.43, dist: 3 },
+            { item: "ns8-t1-6", yaw: 81.08, pitch: 3.32, dist: 3 },
+            { item: "ns8-t1-8", yaw: 102.59, pitch: 3.62, dist: 3 },
+            { item: "ns8-t1-9", yaw: 101.53, pitch: 19.73, dist: 3 },
+            { item: "ns8-t1-11", yaw: 121.25, pitch: 17.59, dist: 3 },
+            { item: "ns8-t1-10", yaw: 121.71, pitch: 4.37, dist: 3 },
+            { item: "ns8-t1-12", yaw: 135.38, pitch: 4.01, dist: 3 },
+            { item: "ns8-t1-13", yaw: 135.01, pitch: 15.43, dist: 3 }
+          ]
+        },
+        {
+          id: "phong2", title: "Tầng 2", image: "p-2.jpg", parent: "phong1",
+          hotspots: [
+            { item: "ns8-t2-14", yaw: -45.21, pitch: 12.92, dist: 3 },
+            { item: "ns8-t2-13", yaw: -35.69, pitch: 2.27, dist: 3 },
+            { item: "ns8-t2-12", yaw: -24.84, pitch: 2.44, dist: 3 },
+            { item: "ns8-t2-10", yaw: -12.97, pitch: 1.62, dist: 3 },
+            { item: "ns8-t2-11", yaw: -21.28, pitch: 13.53, dist: 3 },
+            { item: "ns8-t2-8", yaw: 4.45, pitch: 12.28, dist: 3 },
+            { item: "ns8-t2-9", yaw: 0.07, pitch: 0.93, dist: 3 },
+            { item: "ns8-t2-7", yaw: 12.47, pitch: 0.66, dist: 3 },
+            { item: "ns8-t2-5", yaw: 24.38, pitch: 10.74, dist: 3 },
+            { item: "ns8-t2-6", yaw: 23.79, pitch: 0.37, dist: 3 },
+            { item: "ns8-t2-4", yaw: 35.64, pitch: 9.55, dist: 3 },
+            { item: "ns8-t2-3", yaw: 35.14, pitch: -0.43, dist: 3 },
+            { item: "ns8-t2-1", yaw: 28.89, pitch: -15.4, dist: 3 },
+            { item: "ns8-t2-2", yaw: -42.57, pitch: -13.1, dist: 3 },
+            { to: "phong1", yaw: 108.31, pitch: -26.51, rotX: 10, rotY: 86.1, rotZ: 0, auto: false }
+          ]
+        }
+      ]
+    },
+    /* ───────────── Quảng Trường Hoàng Văn Thụ ───────────── */
+    {
+      id: "nha-d",
+      name: "Quảng Trường Hoàng Văn Thụ",
+      description: "Khám phá Quảng trường Hoàng Văn Thụ, địa điểm mang ý nghĩa lịch sử và văn hóa của Lạng Sơn.",
+      folder: "images/nha-d/",
+      cover: "images/skin/quangtruong.jpg",
+      // Sảnh chờ: hướng dẫn viên (gif) + voice (mp3). Nút VÀO THAM QUAN chỉ hiện khi voice đọc xong.
+      // lobby: false = bỏ sảnh chờ. guide.idleImage (tuỳ chọn) = ảnh tĩnh thay GIF khi voice xong.
+      guide: { gif: "images/skin/guide.gif", voice: "audio/gioithieu_quangtruong.mp3" },
+      settings: {
+        startScene: "phong1",
+        autoRotate: true,
+        idleSpeed: 12,
+        idleDelay: 1500,
+        mouseParallax: true,
+        parallaxYaw: 6,
+        parallaxPitch: 3
+      },
+      scenes: [
+        {
+          id: "phong1", title: "Gian chính", image: "p-1.jpg", parent: null,
+          hotspots: [
+
+          ]
+        }
+      ]
+    }
+  ]
+};
